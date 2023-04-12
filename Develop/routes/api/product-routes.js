@@ -29,7 +29,7 @@ router.get('/:id',async (req, res) => {
 });
 
 // create new product
-router.post('/', (req, res) => {
+router.post('/',async (req, res) => {
   /* req.body should look like this...
     {
       product_name: "Basketball",
@@ -61,7 +61,7 @@ router.post('/', (req, res) => {
 });
 
 // update product
-router.put('/:id', (req, res) => {
+router.put('/:id',async (req, res) => {
   // update product data
   Product.update(req.body, {
     where: {
