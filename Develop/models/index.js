@@ -10,17 +10,25 @@ Product.belongsTo(Category,{
 })
 // Categories have many Products
 Category.hasMany(Product,{
-  foreignKey:'category_id'
+  foreignKey:'category_id',
+  onDelete:'CASCADE'
 })
 // Products belongToMany Tags (through ProductTag)
 Product.belongsToMany(Tag,{
   through: 'ProductTag'
 })
-
+Product.addHook('afterDestroy',(post,option)=>{
+  return ProductTag.destroy({where:{product_id:post.id}})
+  
+})
 
 // Tags belongToMany Products (through ProductTag)
 Tag.belongsToMany(Product,{
   through: 'ProductTag'
+})
+Tag.addHook('afterDestroy',(post,option)=>{
+  return ProductTag.destroy({where:{tag_id:post.id}})
+ 
 })
 module.exports = {
   Product,

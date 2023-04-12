@@ -8,7 +8,10 @@ router.get('/',async (req, res) => {
   // find all products
   // be sure to include its associated Category and Tag data
   console.log('products')
-  let products = await Product.findAll({include:Category}); 
+  let products = await Product.findAll({include:[
+    {model:Category},
+   { model: Tag,through:ProductTag}
+  ]}); 
   return res.json(products).status(200)
 
 });
@@ -18,7 +21,10 @@ router.get('/:id',async (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
   console.log('product')
-  let product = await Product.findOne({where:{id:req.params.id},include:Category}); 
+  let product = await Product.findByPk(req.params.id,{include:[
+    {model:Category},
+   { model: Tag,through:ProductTag}
+  ]}); 
   return res.json(product).status(200)
 });
 
@@ -96,8 +102,17 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id',async (req, res) => {
   // delete one product by its `id` value
+ try{
+  let deletedProduct= await Product.destroy({where:{id:req.params.id} })
+  return res.status(200).json(deletedProduct)
+
+ }
+ catch(error){
+  console.log(error.message)
+  res.status(500).json({error:error.message})
+ }
 });
 
 module.exports = router;
